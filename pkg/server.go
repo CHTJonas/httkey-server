@@ -1,13 +1,11 @@
-package main
+package pkg
 
 import (
-	"context"
 	"log"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"time"
 
@@ -33,37 +31,15 @@ func myMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func main() {
+func GetServer() *http.Server {
 	r := mux.NewRouter()
 	r.MatcherFunc(alwaysMatch).HandlerFunc(serveFileHandler)
 	r.Use(myMiddleware)
-
-	srv := &http.Server{
+	return &http.Server{
 		Handler:     r,
 		Addr:        "127.0.0.1:8000",
 		ReadTimeout: 10 * time.Second,
 	}
-
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			log.Println(err)
-		}
-	}()
-	log.Println("Starting server")
-
-	c := make(chan os.Signal, 1)
-	// SIGQUIT or SIGTERM will not be caught.
-	signal.Notify(c, os.Interrupt)
-	<-c
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	log.Println("Waiting up to 30 seconds for server to shutdown")
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Println("Shutdown error:", err.Error())
-	}
-	log.Println("Goodbye!")
-	os.Exit(0)
 }
 
 func alwaysMatch(_ *http.Request, _ *mux.RouteMatch) bool {
