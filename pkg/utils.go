@@ -36,15 +36,3 @@ func hash(hostname, path string) string {
 	h1, h2 := hasher.Sum128()
 	return fmt.Sprintf("%d%d", h1, h2)
 }
-
-// func splitHostPort(hostport string) (host, port string) {
-// 	host = hostport
-// 	colon := strings.LastIndexByte(host, ':')
-// 	if colon != -1 && validOptionalPort(host[colon:]) {
-// 		host, port = host[:colon], host[colon+1:]
-// 	}
-// 	if strings.HasPrefix(host, "[") && strings.HasSuffix(host, "]") {
-// 		host = host[1 : len(host)-1]
-// 	}
-// 	return
-// }
