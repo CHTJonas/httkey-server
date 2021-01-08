@@ -17,7 +17,7 @@ func logMiddleware(next http.Handler) http.Handler {
 			Host:   r.Host,
 			Path:   r.URL.Path,
 		}
-		log.Println(u.String())
+		log.Println(r.RemoteAddr, r.Method, u.String())
 		next.ServeHTTP(w, r)
 	})
 }
