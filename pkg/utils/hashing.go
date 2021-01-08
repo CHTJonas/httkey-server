@@ -1,4 +1,4 @@
-package pkg
+package utils
 
 import (
 	"fmt"
@@ -21,7 +21,6 @@ func URLToHash(u *url.URL) (string, error) {
 }
 
 func SplitURLToHash(host, path string) (string, error) {
-	//
 	_, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
