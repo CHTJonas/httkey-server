@@ -19,7 +19,7 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 
 	r := mux.NewRouter()
 	r.MatcherFunc(alwaysMatch).Handler(ks)
-	r.Use(serverHeaderMiddleware)
+	r.Use(recoveryMiddleware)
 
 	srv := &http.Server{
 		Handler:     r,
