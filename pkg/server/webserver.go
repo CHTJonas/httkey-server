@@ -19,8 +19,7 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 
 	r := mux.NewRouter()
 	r.MatcherFunc(alwaysMatch).Handler(ks)
-	r.Use(headerMiddleware)
-	r.Use(logMiddleware)
+	r.Use(serverHeaderMiddleware)
 
 	srv := &http.Server{
 		Handler:     r,
@@ -33,6 +32,10 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 		ks:  ks,
 		srv: srv,
 	}
+}
+
+func (w *Webserver) RegisterMiddleware(mwf mux.MiddlewareFunc) {
+	w.r.Use(mwf)
 }
 
 func (w *Webserver) ListenAndServe() error {
