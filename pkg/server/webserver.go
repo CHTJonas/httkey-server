@@ -1,23 +1,46 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func NewServer(path, addr string, readTimeout time.Duration) *http.Server {
+type Webserver struct {
+	r   *mux.Router
+	ks  *Keyserver
+	srv *http.Server
+}
+
+func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 	ks := NewKeyserver(path)
+
 	r := mux.NewRouter()
 	r.MatcherFunc(alwaysMatch).Handler(ks)
 	r.Use(headerMiddleware)
 	r.Use(logMiddleware)
-	return &http.Server{
+
+	srv := &http.Server{
 		Handler:     r,
 		Addr:        addr,
 		ReadTimeout: readTimeout,
 	}
+
+	return &Webserver{
+		r:   r,
+		ks:  ks,
+		srv: srv,
+	}
+}
+
+func (w *Webserver) ListenAndServe() error {
+	return w.srv.ListenAndServe()
+}
+
+func (w *Webserver) Shutdown(ctx context.Context) error {
+	return w.srv.Shutdown(ctx)
 }
 
 func alwaysMatch(_ *http.Request, _ *mux.RouteMatch) bool {
