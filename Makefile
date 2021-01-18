@@ -5,28 +5,16 @@ VER=$(shell git describe --tags)
 GO=$(shell which go)
 GOMOD=$(GO) mod
 GOFMT=$(GO) fmt
-GOBUILD=$(GO) build -ldflags "-X main.version=$(VER)"
+GOBUILD=$(GO) build -mod=readonly -ldflags "-X main.version=$(VER)"
 
 dir:
 	@if [ ! -d bin ]; then mkdir -p bin; fi
 
 mod:
-	$(GOMOD) download
+	@$(GOMOD) download
 
 format:
-	$(GOFMT) ./...
-
-build/linux/386: dir mod
-	export CGO_ENABLED=0
-	export GOOS=linux
-	export GOARCH=386
-	$(GOBUILD) -o bin/httkey-linux-$(VER:v%=%)-386
-
-build/linux/amd64: dir mod
-	export CGO_ENABLED=0
-	export GOOS=linux
-	export GOARCH=amd64
-	$(GOBUILD) -o bin/httkey-linux-$(VER:v%=%)-amd64
+	@$(GOFMT) ./...
 
 build/linux/armv7: dir mod
 	export CGO_ENABLED=0
@@ -41,7 +29,19 @@ build/linux/arm64: dir mod
 	export GOARCH=arm64
 	$(GOBUILD) -o bin/httkey-linux-$(VER:v%=%)-arm64
 
-build/linux: build/linux/386 build/linux/amd64 build/linux/armv7 build/linux/arm64
+build/linux/386: dir mod
+	export CGO_ENABLED=0
+	export GOOS=linux
+	export GOARCH=386
+	$(GOBUILD) -o bin/httkey-linux-$(VER:v%=%)-386
+
+build/linux/amd64: dir mod
+	export CGO_ENABLED=0
+	export GOOS=linux
+	export GOARCH=amd64
+	$(GOBUILD) -o bin/httkey-linux-$(VER:v%=%)-amd64
+
+build/linux: build/linux/armv7 build/linux/arm64 build/linux/386 build/linux/amd64
 
 build/darwin/amd64: dir mod
 	export CGO_ENABLED=0
