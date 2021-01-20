@@ -12,17 +12,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var path string
+var addr string
+
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Run web server",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: "Runs the web server serving static files out of the directory in the given path, " +
+		"or the current directory if none us given.",
 	Run: func(cmd *cobra.Command, args []string) {
-		srv := server.NewWebserver("/tmp", "127.0.0.1:8000", 10*time.Second)
+		if len(path) == 0 {
+			var err error
+			path, err = os.Getwd()
+			if err != nil {
+				log.Panicln(err)
+			}
+		}
+
+		srv := server.NewWebserver(path, addr, 10*time.Second)
 		srv.RegisterMiddleware(server.ServerHeaderMiddleware)
 		srv.RegisterMiddleware(server.ProxyMiddleware)
 		srv.RegisterMiddleware(server.DefaultLogMiddleware)
@@ -52,14 +59,6 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// generateManifestCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// generateManifestCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	serveCmd.Flags().StringVarP(&path, "path", "p", "", "directory from which to serve files (default current directory)")
+	serveCmd.Flags().StringVarP(&addr, "bind", "b", "localhost:8080", "address and port to bind to")
 }

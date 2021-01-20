@@ -10,7 +10,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "httkey",
 	Short: "HTTP server that serves files based on the hash of the URL",
-	Long:  `httkey is a web server that serves files with a filename based on a 128-bit MurmurHash3 of the URL.`,
+	Long: "httkey is a web server that serves static files in response to HTTP requests. " +
+		"The static files are all stored in a single directory with filenames that are a hash of their URL." +
+		"The hash used is a 128-bit MurmurHash3 of the request path, keyed on the HTTP Host.",
 }
 
 func Execute(v string) {
