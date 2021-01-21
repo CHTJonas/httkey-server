@@ -14,13 +14,12 @@ var hashCmd = &cobra.Command{
 	Long: "Takes a URL as an argument and outputs its hash. " +
 		"You can use this to determine what the filenames of your static content should be.",
 	Run: func(cmd *cobra.Command, args []string) {
-		rawurl := os.Args[2]
-		hash, err := utils.RawURLToHash(rawurl)
+		hash, err := utils.RawURLToHash(args[0])
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
-		fmt.Printf("%s: %s\n", rawurl, hash)
+		fmt.Printf("%s: %s\n", args[0], hash)
 	},
 }
 
