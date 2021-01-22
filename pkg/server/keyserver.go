@@ -49,7 +49,7 @@ func (k *Keyserver) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
-	case http.MethodGet:
+	case http.MethodHead, http.MethodGet:
 		r2 := k.setRequestPathToHash(hash, r)
 		http.FileServer(http.Dir(k.StaticPath)).ServeHTTP(w, r2)
 	default:
