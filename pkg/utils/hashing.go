@@ -9,7 +9,7 @@ import (
 )
 
 func RawURLToHash(rawurl string) (string, error) {
-	u, err := url.Parse(rawurl)
+	u, err := ParseURL(rawurl)
 	if err != nil {
 		return "", err
 	}

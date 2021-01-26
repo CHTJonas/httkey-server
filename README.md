@@ -11,6 +11,8 @@ httkey is a simple web server that serves static files but with a twist. The hos
 * If a file exists but the requests method is not `GET` then we should serve a `405` error page.
 * If a file does not exist then we should serve a `404` error page.
 
+It's expected that httkey will be run behind a reverse proxy such as nginx which will take care of the TLS termination. As such, URLs are often handled internally as `http` rather than `https` however this makes no practical difference.
+
 ## Build
 
 To compile httkey you can run the following in a terminal. This will produce 64-bit binaries for Windows and macOS in addition to Linux binaries for the `arm`, `arm64`, `i386` and `amd64` architectures.
@@ -24,15 +26,15 @@ make clean && make build
 This quick example demonstrates how you can deploy a static [MTA-STS policy](https://en.wikipedia.org/wiki/MTA-STS) ([RFC 8461](https://tools.ietf.org/html/rfc8461)) using httkey:
 
 ```
-$ httkey hash https://mta-sts.example.com/.well-known/mta-sts.txt
-https://mta-sts.example.com/.well-known/mta-sts.txt: 1078522949910736262516577261162986308780
+$ httkey hash http://mta-sts.example.com/.well-known/mta-sts.txt
+http://mta-sts.example.com/.well-known/mta-sts.txt	1078522949910736262516577261162986308780
 
-$ cat <<END > /tmp/1078522949910736262516577261162986308780
+$ cat > /tmp/1078522949910736262516577261162986308780 <<EOF
 version: STSv1
 mode: enforce
 mx: mail.example.com
 max_age: 86400
-END
+EOF
 
 $ httkey serve -p /tmp
 ```
@@ -40,12 +42,14 @@ $ httkey serve -p /tmp
 And in a different terminal tab:
 
 ```
-$ curl --resolve mta-sts.example.com:8080:127.0.0.1 https://mta-sts.example.com:8080/.well-known/mta-sts.txt
+$ curl --resolve mta-sts.example.com:8080:127.0.0.1 http://mta-sts.example.com:8080/.well-known/mta-sts.txt
 version: STSv1
 mode: enforce
 mx: mail.example.com
 max_age: 86400
 ```
+
+A production MTA-STS deployment would need DNS & TLS provisiong and setting up correctly but this is out of scope for this simple demonstration.
 
 ## Usage
 
