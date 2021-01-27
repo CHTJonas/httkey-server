@@ -12,7 +12,7 @@ httkey is a simple web server that serves static files but with a twist. The hos
 * If a file exists but the requests method is not `GET` then we should serve a `405` error page.
 * If a file does not exist then we should serve a `404` error page.
 
-It's expected that httkey will be run behind a reverse proxy such as nginx which will take care of the TLS termination. As such, URLs are often handled internally as `http` rather than `https` however this makes no practical difference.
+It's expected that httkey will be run behind a reverse proxy such as nginx which will take care of the TLS termination. As such, URLs are often handled internally as `http` rather than `https` however this makes no practical difference. Port numbers also have no bearing on the overall hashing.
 
 ## Build
 
@@ -61,6 +61,7 @@ Usage:
 Available Commands:
   hash        Hash a URL
   help        Help about any command
+  license     Print copyright license
   serve       Run web server
   version     Print version information
 
