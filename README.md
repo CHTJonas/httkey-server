@@ -7,7 +7,8 @@ httkey is a simple web server that serves static files but with a twist. The hos
 * Binaries should be statically-linked with any assets (e.g. error pages) embedded.
 * Files should be served from a single directory. There should be no sub-hierarchy.
 * The hash should be a 128-bit MurmurHash3 of the request path, seeded with the contents of the `Host` header.
-* If a file exists with a name that matches the output of the hash and the request method is `GET` then we should serve it.
+* The binary output of the hash should be encoded in hexadecimal form.
+* If a file exists with a name that matches the hex-encoded output of the hash and the request method is `GET` then we should serve it.
 * If a file exists but the requests method is not `GET` then we should serve a `405` error page.
 * If a file does not exist then we should serve a `404` error page.
 
@@ -27,9 +28,9 @@ This quick example demonstrates how you can deploy a static [MTA-STS policy](htt
 
 ```
 $ httkey hash http://mta-sts.example.com/.well-known/mta-sts.txt
-http://mta-sts.example.com/.well-known/mta-sts.txt	1078522949910736262516577261162986308780
+http://mta-sts.example.com/.well-known/mta-sts.txt	c18eefdae3a2b5d69501ac89b6c5a9e69087e601
 
-$ cat > /tmp/1078522949910736262516577261162986308780 <<EOF
+$ cat > /tmp/c18eefdae3a2b5d69501ac89b6c5a9e69087e601 <<EOF
 version: STSv1
 mode: enforce
 mx: mail.example.com

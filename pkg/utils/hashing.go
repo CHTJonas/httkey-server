@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -33,5 +35,11 @@ func hash(hostname, path string) string {
 	hasher := murmur3.New128WithSeed(seed)
 	hasher.Write([]byte(path))
 	h1, h2 := hasher.Sum128()
-	return fmt.Sprintf("%d%d", h1, h2)
+	return fmt.Sprintf("%s%s", uintToString(h1), uintToString(h2))
+}
+
+func uintToString(x uint64) string {
+	buf := make([]byte, binary.MaxVarintLen64)
+	binary.PutUvarint(buf, x)
+	return hex.EncodeToString(buf)
 }
