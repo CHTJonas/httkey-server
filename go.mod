@@ -8,5 +8,5 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/shuLhan/go-bindata v4.0.0+incompatible // indirect
 	github.com/spaolacci/murmur3 v1.1.0
-	github.com/spf13/cobra v1.1.1
+	github.com/spf13/cobra v1.1.2
 )
