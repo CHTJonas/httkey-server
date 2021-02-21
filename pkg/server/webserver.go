@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/CHTJonas/httkey-server/assets"
 	"github.com/gorilla/mux"
 )
 
@@ -18,6 +19,7 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 	ks := NewKeyserver(path)
 
 	r := mux.NewRouter()
+	r.PathPrefix("/static/").Handler(assets.Server())
 	r.MatcherFunc(alwaysMatch).Handler(ks)
 	r.Use(recoveryMiddleware)
 

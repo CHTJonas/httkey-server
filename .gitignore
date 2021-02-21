@@ -13,6 +13,3 @@
 
 # Compiled output
 bin/
-
-# Embedded asset code
-/assets/*.go

@@ -69,7 +69,11 @@ func (k *Keyserver) setRequestPathToHash(hash string, r *http.Request) *http.Req
 func respondWithError(w http.ResponseWriter, r *http.Request, title, message string, statusCode int) {
 	body := fmt.Sprintf("%s\n%s\n", title, message)
 	if clientAcceptsHTML(r) {
-		template := assets.MustAsset("assets/error.html.mustache")
+		template, err := assets.ReadFile("error.html.mustache")
+		if err != nil {
+			http.Error(w, message, statusCode)
+			return
+		}
 		context := map[string]string{"title": title, "message": message}
 		html, err := mustache.Render(string(template), context)
 		if err != nil {
