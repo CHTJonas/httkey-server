@@ -48,7 +48,7 @@ build/darwin/arm64: dir mod
 	export CGO_ENABLED=0
 	export GOOS=darwin
 	export GOARCH=arm64
-	$(GOBUILD) -o bin/go-lg-darwin-$(VER:v%=%)-arm64
+	$(GOBUILD) -o bin/httkey-darwin-$(VER:v%=%)-arm64
 
 build/darwin/amd64: dir mod
 	export CGO_ENABLED=0
