@@ -30,7 +30,18 @@ var hashCmd = &cobra.Command{
 		}
 		s = fmt.Sprintf("%s\t%s", s, hash)
 		fmt.Println(s)
+		logHash(s, "hashes.txt")
 	},
+}
+
+func logHash(str, logFile string) error {
+	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(str + "\n")
+	return err
 }
 
 func init() {
