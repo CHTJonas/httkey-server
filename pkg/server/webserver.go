@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -34,6 +35,10 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 		ks:  ks,
 		srv: srv,
 	}
+}
+
+func (w *Webserver) SetLogger(logger *log.Logger) {
+	w.srv.ErrorLog = logger
 }
 
 func (w *Webserver) RegisterMiddleware(mwf mux.MiddlewareFunc) {
