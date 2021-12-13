@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var path string
 var addr string
 
 var serveCmd = &cobra.Command{
@@ -21,14 +20,6 @@ var serveCmd = &cobra.Command{
 	Long: "Runs the web server serving static files out of the directory in the given path, " +
 		"or the current directory if none us given.",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(path) == 0 {
-			var err error
-			path, err = os.Getwd()
-			if err != nil {
-				log.Panicln(err)
-			}
-		}
-
 		srv := server.NewWebserver(path, addr, 10*time.Second)
 		srv.RegisterMiddleware(server.ServerHeaderMiddleware)
 		srv.RegisterMiddleware(server.ProxyMiddleware)
@@ -59,6 +50,5 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	serveCmd.Flags().StringVarP(&path, "path", "p", "", "directory from which to serve files (default current directory)")
 	serveCmd.Flags().StringVarP(&addr, "bind", "b", "localhost:8080", "address and port to bind to")
 }

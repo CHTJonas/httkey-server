@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 )
+
+var path string
 
 var rootCmd = &cobra.Command{
 	Use:   "httkey",
@@ -25,8 +28,15 @@ func Execute(v string) {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVarP(&path, "path", "p", "", "directory from which to serve files (default current directory)")
 }
 
 func initConfig() {
-	// TODO
+	if len(path) == 0 {
+		var err error
+		path, err = os.Getwd()
+		if err != nil {
+			log.Panicln(err)
+		}
+	}
 }
