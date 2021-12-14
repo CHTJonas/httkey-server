@@ -30,7 +30,7 @@ var hashCmd = &cobra.Command{
 		}
 		s = fmt.Sprintf("%s\t%s", s, hash)
 		fmt.Println(s)
-		logHash(s, "hashes.txt")
+		logHash(s, path+"/hashes.txt")
 	},
 }
 

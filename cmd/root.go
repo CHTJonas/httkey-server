@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -39,6 +40,7 @@ func initConfig() {
 			log.Panicln(err)
 		}
 	}
+	path = strings.TrimSuffix(path, "/")
 
 	if os.Getenv("JOURNAL_STREAM") != "" {
 		log.Default().SetFlags(0)
