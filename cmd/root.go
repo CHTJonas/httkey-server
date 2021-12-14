@@ -39,4 +39,8 @@ func initConfig() {
 			log.Panicln(err)
 		}
 	}
+
+	if os.Getenv("JOURNAL_STREAM") != "" {
+		log.Default().SetFlags(0)
+	}
 }
