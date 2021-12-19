@@ -20,30 +20,32 @@ var serveCmd = &cobra.Command{
 	Long: "Runs the web server serving static files out of the directory in the given path, " +
 		"or the current directory if none us given.",
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Println("httkey version", version)
 		srv := server.NewWebserver(path, addr, 10*time.Second)
 		srv.RegisterMiddleware(server.ServerHeaderMiddleware)
 		srv.RegisterMiddleware(server.ProxyMiddleware)
 		srv.RegisterMiddleware(server.LoggingMiddleware)
 
+		log.Println("Starting server...")
 		go func() {
 			if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-				log.Println(err)
+				log.Println("Startup error:", err.Error())
 			}
 		}()
-		log.Println("Starting server")
+		log.Println("Listening on", addr)
 
 		c := make(chan os.Signal, 1)
 		// SIGQUIT or SIGTERM will not be caught.
 		signal.Notify(c, os.Interrupt)
 		<-c
-
+		log.Println("Received shutdown signal!")
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		log.Println("Waiting up to 30 seconds for server to shutdown")
+		log.Println("Waiting for server to exit...")
 		if err := srv.Shutdown(ctx); err != nil {
 			log.Println("Shutdown error:", err.Error())
 		}
-		log.Println("Goodbye!")
+		log.Println("Bye-bye!")
 		os.Exit(0)
 	},
 }
