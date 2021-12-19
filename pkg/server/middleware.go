@@ -57,7 +57,7 @@ func ProxyMiddleware(next http.Handler) http.Handler {
 
 func ServerHeaderMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Server", "https://github.com/CHTJonas/httkey-server")
+		w.Header().Set("X-Powered-By", "https://github.com/CHTJonas/httkey-server")
 		next.ServeHTTP(w, r)
 	})
 }
