@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/CHTJonas/httkey-server/pkg/server"
@@ -33,10 +34,10 @@ var serveCmd = &cobra.Command{
 			}
 		}()
 		log.Println("Listening on", addr)
-
 		c := make(chan os.Signal, 1)
-		// SIGQUIT or SIGTERM will not be caught.
-		signal.Notify(c, os.Interrupt)
+		signal.Notify(c, syscall.SIGINT)
+		signal.Notify(c, syscall.SIGQUIT)
+		signal.Notify(c, syscall.SIGTERM)
 		<-c
 		log.Println("Received shutdown signal!")
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
