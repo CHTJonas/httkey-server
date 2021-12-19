@@ -28,8 +28,7 @@ func (k *Keyserver) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	reqPath := r.URL.Path
 	host, _, err := net.SplitHostPort(r.Host)
 	if err != nil {
-		respondWithError(w, r, "500 Internal Server Error", err.Error(), http.StatusInternalServerError)
-		return
+		host = r.Host
 	}
 
 	hash, err := utils.SplitURLToHash(host, reqPath)

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"runtime/debug"
@@ -33,6 +34,10 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 			Host:   r.Host,
 			Path:   r.URL.Path,
 		}
+		addr, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			addr = r.RemoteAddr
+		}
 		httpInfo := fmt.Sprintf("\"%s %s %s\"", r.Method, u.String(), r.Proto)
 		refererInfo := fmt.Sprintf("\"%s\"", r.Referer())
 		if refererInfo == "\"\"" {
@@ -42,7 +47,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		if uaInfo == "\"\"" {
 			uaInfo = "\"-\""
 		}
-		log.Println(r.RemoteAddr, httpInfo, lrw.statusCode, refererInfo, uaInfo)
+		log.Println(addr, httpInfo, lrw.statusCode, refererInfo, uaInfo)
 	})
 }
 
