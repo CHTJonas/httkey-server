@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -21,6 +22,9 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(assets.Server())
+	r.Path("/ping").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "pong")
+	})
 	r.MatcherFunc(alwaysMatch).Handler(ks)
 	r.Use(recoveryMiddleware)
 
