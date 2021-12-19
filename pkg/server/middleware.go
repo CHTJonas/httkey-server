@@ -5,14 +5,25 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"runtime/debug"
 
 	"github.com/gorilla/handlers"
 )
 
-func DefaultLogMiddleware(next http.Handler) http.Handler {
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func (lrw *loggingResponseWriter) WriteHeader(code int) {
+	lrw.statusCode = code
+	lrw.ResponseWriter.WriteHeader(code)
+}
+
+func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lrw := &loggingResponseWriter{w, http.StatusOK}
+		next.ServeHTTP(lrw, r)
 		scheme := r.URL.Scheme
 		if len(scheme) == 0 {
 			scheme = "http"
@@ -22,14 +33,17 @@ func DefaultLogMiddleware(next http.Handler) http.Handler {
 			Host:   r.Host,
 			Path:   r.URL.Path,
 		}
-		httpAction := fmt.Sprintf("\"%s %s %s\"", r.Method, u.String(), r.Proto)
-		log.Println(r.RemoteAddr, httpAction)
-		next.ServeHTTP(w, r)
+		httpInfo := fmt.Sprintf("\"%s %s %s\"", r.Method, u.String(), r.Proto)
+		refererInfo := fmt.Sprintf("\"%s\"", r.Referer())
+		if refererInfo == "\"\"" {
+			refererInfo = "\"-\""
+		}
+		uaInfo := fmt.Sprintf("\"%s\"", r.UserAgent())
+		if uaInfo == "\"\"" {
+			uaInfo = "\"-\""
+		}
+		log.Println(r.RemoteAddr, httpInfo, lrw.statusCode, refererInfo, uaInfo)
 	})
-}
-
-func ApacheLogMiddleware(next http.Handler) http.Handler {
-	return handlers.LoggingHandler(os.Stdout, next)
 }
 
 func ProxyMiddleware(next http.Handler) http.Handler {

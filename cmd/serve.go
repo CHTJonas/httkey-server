@@ -23,7 +23,7 @@ var serveCmd = &cobra.Command{
 		srv := server.NewWebserver(path, addr, 10*time.Second)
 		srv.RegisterMiddleware(server.ServerHeaderMiddleware)
 		srv.RegisterMiddleware(server.ProxyMiddleware)
-		srv.RegisterMiddleware(server.DefaultLogMiddleware)
+		srv.RegisterMiddleware(server.LoggingMiddleware)
 
 		go func() {
 			if err := srv.ListenAndServe(); err != http.ErrServerClosed {
