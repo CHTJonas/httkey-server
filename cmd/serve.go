@@ -30,7 +30,7 @@ var serveCmd = &cobra.Command{
 		log.Println("Starting server...")
 		go func() {
 			if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-				log.Println("Startup error:", err.Error())
+				log.Fatalln("Startup error:", err.Error())
 			}
 		}()
 		log.Println("Listening on", addr)
@@ -44,7 +44,7 @@ var serveCmd = &cobra.Command{
 		defer cancel()
 		log.Println("Waiting for server to exit...")
 		if err := srv.Shutdown(ctx); err != nil {
-			log.Println("Shutdown error:", err.Error())
+			log.Fatalln("Shutdown error:", err.Error())
 		}
 		log.Println("Bye-bye!")
 		os.Exit(0)

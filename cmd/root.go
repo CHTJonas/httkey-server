@@ -33,6 +33,9 @@ func init() {
 }
 
 func initConfig() {
+	if os.Getenv("JOURNAL_STREAM") != "" {
+		log.Default().SetFlags(0)
+	}
 	if len(path) == 0 {
 		var err error
 		path, err = os.Getwd()
@@ -41,8 +44,4 @@ func initConfig() {
 		}
 	}
 	path = strings.TrimSuffix(path, "/")
-
-	if os.Getenv("JOURNAL_STREAM") != "" {
-		log.Default().SetFlags(0)
-	}
 }
