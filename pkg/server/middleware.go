@@ -55,11 +55,13 @@ func ProxyMiddleware(next http.Handler) http.Handler {
 	return handlers.ProxyHeaders(next)
 }
 
-func ServerHeaderMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("X-Powered-By", "https://github.com/CHTJonas/httkey-server")
-		next.ServeHTTP(w, r)
-	})
+func ServerHeaderMiddleware(pwrBy string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Powered-By", pwrBy)
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 func recoveryMiddleware(next http.Handler) http.Handler {

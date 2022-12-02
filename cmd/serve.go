@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
+	"strings"
 	"syscall"
 	"time"
 
@@ -22,8 +25,10 @@ var serveCmd = &cobra.Command{
 		"or the current directory if none us given.",
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println("httkey version", version)
-		srv := server.NewWebserver(path, addr, 10*time.Second)
-		srv.RegisterMiddleware(server.ServerHeaderMiddleware)
+		pwrBy := fmt.Sprintf("httkey/%s Go/%s (+https://github.com/CHTJonas/httkey-server)",
+			version, strings.TrimPrefix(runtime.Version(), "go"))
+		srv := server.NewWebserver(path, addr, 10*time.Second, pwrBy)
+		srv.RegisterMiddleware(server.ServerHeaderMiddleware(pwrBy))
 		srv.RegisterMiddleware(server.ProxyMiddleware)
 		srv.RegisterMiddleware(server.LoggingMiddleware)
 

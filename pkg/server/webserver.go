@@ -12,12 +12,13 @@ import (
 )
 
 type Webserver struct {
-	r   *mux.Router
-	ks  *Keyserver
-	srv *http.Server
+	r     *mux.Router
+	ks    *Keyserver
+	srv   *http.Server
+	pwrBy string
 }
 
-func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
+func NewWebserver(path, addr string, readTimeout time.Duration, pwrBy string) *Webserver {
 	ks := NewKeyserver(path)
 
 	r := mux.NewRouter()
@@ -35,9 +36,10 @@ func NewWebserver(path, addr string, readTimeout time.Duration) *Webserver {
 	}
 
 	return &Webserver{
-		r:   r,
-		ks:  ks,
-		srv: srv,
+		r:     r,
+		ks:    ks,
+		srv:   srv,
+		pwrBy: pwrBy,
 	}
 }
 
