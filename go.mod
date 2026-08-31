@@ -3,7 +3,7 @@ module github.com/CHTJonas/httkey-server
 go 1.16
 
 require (
-	github.com/cbroglie/mustache v1.4.0
+	github.com/cbroglie/mustache v1.4.1
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
 	github.com/spaolacci/murmur3 v1.1.0
